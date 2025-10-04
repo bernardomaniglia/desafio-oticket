@@ -13,11 +13,10 @@
     "db:stop": "cd backend && docker-compose down",
     "db:migrate": "cd backend && npx prisma migrate dev",
     "//-- SETUP COMPLETO --//": "",
-    "setup": "npm run install:all && npm run db:up && timeout /t 5 && npm run db:migrate",
+    "setup": "npm run install:all && npm run db:up && timeout /t 15 && npm run db:migrate",
     "//-- RODAR APLICAÇÃO --//": "",
     "dev:backend": "cd backend && npm run dev",
-    "dev:frontend": "cd frontend && npm run dev",
-    "dev": "concurrently \"npm:dev:backend\" \"npm:dev:frontend\""
+    "dev:frontend": "cd frontend && npm run dev"
   },
   "repository": {
     "type": "git",
@@ -29,8 +28,5 @@
   "bugs": {
     "url": "https://github.com/bernardomaniglia/desafio-oticket/issues"
   },
-  "homepage": "https://github.com/bernardomaniglia/desafio-oticket#readme",
-  "devDependencies": {
-    "concurrently": "^9.2.1"
-  }
+  "homepage": "https://github.com/bernardomaniglia/desafio-oticket#readme"
 }
