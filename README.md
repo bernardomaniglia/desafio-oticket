@@ -4,7 +4,7 @@ Com Node.js e Docker instalados, o processo é muito simples.
 
 1.  **Clone o repositório:**
     ```bash
-    git clone [https://github.com/bernardomaniglia/desafio-oticket.git]
+    git clone https://github.com/bernardomaniglia/desafio-oticket.git
     cd desafio-oticket
     ```
 2.  **Copie o arquivo de ambiente:**
