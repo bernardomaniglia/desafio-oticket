@@ -1,0 +1,36 @@
+{
+  "name": "desafio-oticket",
+  "version": "1.0.0",
+  "description": "Este é o projeto de desafio técnico para a vaga de desenvolvedor, construído para demonstrar habilidades em Node.js, Next.js e PostgreSQL.",
+  "main": "index.js",
+  "scripts": {
+    "//-- INSTALAÇÃO --//": "",
+    "install:backend": "cd backend && npm install",
+    "install:frontend": "cd frontend && npm install",
+    "install:all": "npm run install:backend && npm run install:frontend",
+    "//-- BANCO DE DADOS (DOCKER) --//": "",
+    "db:up": "cd backend && docker-compose up -d",
+    "db:stop": "cd backend && docker-compose down",
+    "db:migrate": "cd backend && npx prisma migrate dev",
+    "//-- SETUP COMPLETO --//": "",
+    "setup": "npm run install:all && npm run db:up && npm run db:migrate",
+    "//-- RODAR APLICAÇÃO --//": "",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev": "concurrently \"npm:dev:backend\" \"npm:dev:frontend\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bernardomaniglia/desafio-oticket.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bernardomaniglia/desafio-oticket/issues"
+  },
+  "homepage": "https://github.com/bernardomaniglia/desafio-oticket#readme",
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
