@@ -13,7 +13,7 @@
     "db:stop": "cd backend && docker-compose down",
     "db:migrate": "cd backend && npx prisma migrate dev",
     "//-- SETUP COMPLETO --//": "",
-    "setup": "npm run install:all && npm run db:up && npm run db:migrate",
+    "setup": "npm run install:all && npm run db:up && sleep 5 && npm run db:migrate",
     "//-- RODAR APLICAÇÃO --//": "",
     "dev:backend": "cd backend && npm run dev",
     "dev:frontend": "cd frontend && npm run dev",
