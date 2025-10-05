@@ -12,9 +12,10 @@ export default function PedidosPage() {
   const [selectedCliente, setSelectedCliente] = useState("");
   const [selectedProdutos, setSelectedProdutos] = useState(new Set());
   const [feedback, setFeedback] = useState("");
-
-  // Adicionando o estado de loading
   const [isLoading, setIsLoading] = useState(true);
+
+  // 1. Lógica de validação para o formulário de pedidos
+  const isFormInvalid = selectedCliente === "" || selectedProdutos.size === 0;
 
   const fetchData = async () => {
     setIsLoading(true);
@@ -51,7 +52,7 @@ export default function PedidosPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!selectedCliente || selectedProdutos.size === 0) {
+    if (isFormInvalid) {
       setFeedback("Por favor, selecione um cliente e ao menos um produto.");
       return;
     }
@@ -76,7 +77,6 @@ export default function PedidosPage() {
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Gerenciamento de Pedidos</h1>
 
-      {/* Formulário de Novo Pedido (continua o mesmo) */}
       <div className="mb-8 p-4 border rounded-lg">
         <h2 className="text-xl font-semibold mb-2">Novo Pedido</h2>
         <form onSubmit={handleSubmit}>
@@ -102,6 +102,7 @@ export default function PedidosPage() {
               ))}
             </select>
           </div>
+
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700">
               Produtos
@@ -126,14 +127,17 @@ export default function PedidosPage() {
               ))}
             </div>
           </div>
+
+          {/* 2. Botão modificado com a lógica de disabled */}
           <button
             type="submit"
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+            disabled={isFormInvalid}
+            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
           >
             Criar Pedido
           </button>
         </form>
-        {feedback && <p className="mt-4 text-sm text-green-600">{feedback}</p>}
+        {feedback && <p className="mt-4 text-sm text-red-600">{feedback}</p>}
       </div>
 
       {/* Lista de Pedidos com Loading State */}

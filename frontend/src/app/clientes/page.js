@@ -9,12 +9,12 @@ export default function ClientesPage() {
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [feedback, setFeedback] = useState("");
-
-  // 1. Adicionar o estado de loading, iniciando como true
   const [isLoading, setIsLoading] = useState(true);
 
+  // Lógica de validação: verifica se algum campo está vazio (ignorando espaços)
+  const isFormInvalid = nome.trim() === "" || email.trim() === "";
+
   const fetchClientes = async () => {
-    // Definimos o loading como true sempre que a busca começa
     setIsLoading(true);
     try {
       const response = await api.get("/clientes");
@@ -23,7 +23,6 @@ export default function ClientesPage() {
       console.error("Erro ao buscar clientes:", error);
       setFeedback("Erro ao carregar clientes.");
     } finally {
-      // 2. Ao final (sucesso ou erro), definimos o loading como false
       setIsLoading(false);
     }
   };
@@ -34,6 +33,8 @@ export default function ClientesPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isFormInvalid) return; // Segurança extra para não submeter se inválido
+
     setFeedback("");
 
     try {
@@ -52,7 +53,6 @@ export default function ClientesPage() {
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Gerenciamento de Clientes</h1>
 
-      {/* ... (formulário de cadastro continua o mesmo) ... */}
       <div className="mb-8 p-4 border rounded-lg">
         <h2 className="text-xl font-semibold mb-2">Novo Cliente</h2>
         <form onSubmit={handleSubmit}>
@@ -90,7 +90,8 @@ export default function ClientesPage() {
           </div>
           <button
             type="submit"
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+            disabled={isFormInvalid}
+            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
           >
             Cadastrar
           </button>
@@ -98,10 +99,8 @@ export default function ClientesPage() {
         {feedback && <p className="mt-4 text-sm text-green-600">{feedback}</p>}
       </div>
 
-      {/* Lista de Clientes com Renderização Condicional */}
       <div>
         <h2 className="text-xl font-semibold mb-2">Clientes Cadastrados</h2>
-        {/* 3. Lógica de renderização condicional */}
         {isLoading ? (
           <p className="text-center">Carregando clientes...</p>
         ) : (

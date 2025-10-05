@@ -9,9 +9,10 @@ export default function ProdutosPage() {
   const [nome, setNome] = useState("");
   const [preco, setPreco] = useState("");
   const [feedback, setFeedback] = useState("");
-
-  // Adicionando o estado de loading
   const [isLoading, setIsLoading] = useState(true);
+
+  // 1. Lógica de validação: verifica se nome ou preço estão vazios
+  const isFormInvalid = nome.trim() === "" || preco.trim() === "";
 
   const fetchProdutos = async () => {
     setIsLoading(true);
@@ -32,6 +33,8 @@ export default function ProdutosPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isFormInvalid) return;
+
     setFeedback("");
 
     try {
@@ -50,11 +53,9 @@ export default function ProdutosPage() {
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Gerenciamento de Produtos</h1>
 
-      {/* Formulário de Cadastro */}
       <div className="mb-8 p-4 border rounded-lg">
         <h2 className="text-xl font-semibold mb-2">Novo Produto</h2>
         <form onSubmit={handleSubmit}>
-          {/* ... campos do formulário ... */}
           <div className="mb-4">
             <label
               htmlFor="nome"
@@ -88,9 +89,11 @@ export default function ProdutosPage() {
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
+          {/* 2. Botão modificado com a lógica de disabled */}
           <button
             type="submit"
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+            disabled={isFormInvalid}
+            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
           >
             Cadastrar
           </button>
@@ -98,7 +101,6 @@ export default function ProdutosPage() {
         {feedback && <p className="mt-4 text-sm text-green-600">{feedback}</p>}
       </div>
 
-      {/* Lista de Produtos com Loading State */}
       <div>
         <h2 className="text-xl font-semibold mb-2">Produtos Cadastrados</h2>
         {isLoading ? (
