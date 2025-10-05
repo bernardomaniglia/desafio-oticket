@@ -9,11 +9,12 @@ const pedidoRoutes = require("./routes/pedido.routes");
 const swaggerUi = require("swagger-ui-express");
 const swaggerJsdoc = require("swagger-jsdoc");
 
+// --- O QUE FICOU IGUAL (INÍCIO) ---
+// Toda a parte de configuração do Express, rotas e Swagger permanece a mesma.
+
 const app = express();
 app.use(express.json());
 app.use(cors());
-
-const PORT = 3333;
 
 const swaggerDefinition = {
   openapi: "3.0.0",
@@ -216,7 +217,11 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 app.use("/clientes", clienteRoutes);
 app.use("/produtos", produtoRoutes);
 app.use("/pedidos", pedidoRoutes);
+// --- O QUE FICOU IGUAL (FIM) ---
 
-app.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
-});
+// --- O QUE MUDOU ---
+// A constante PORT e o bloco app.listen() foram REMOVIDOS deste arquivo.
+// Em vez disso, exportamos a instância 'app' para que outros arquivos
+// (como nosso novo index.js e nossos testes) possam usá-la.
+
+module.exports = app;
