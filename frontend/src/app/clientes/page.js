@@ -2,50 +2,45 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import api from "@/lib/api"; // Nosso cliente Axios configurado
+import api from "@/lib/api";
 
 export default function ClientesPage() {
-  // Estado para armazenar a lista de clientes
   const [clientes, setClientes] = useState([]);
-
-  // Estados para os campos do formulário de novo cliente
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
-
-  // Estado para feedback ao usuário
   const [feedback, setFeedback] = useState("");
 
-  // Função para buscar os clientes da API
+  // 1. Adicionar o estado de loading, iniciando como true
+  const [isLoading, setIsLoading] = useState(true);
+
   const fetchClientes = async () => {
+    // Definimos o loading como true sempre que a busca começa
+    setIsLoading(true);
     try {
       const response = await api.get("/clientes");
       setClientes(response.data);
     } catch (error) {
       console.error("Erro ao buscar clientes:", error);
       setFeedback("Erro ao carregar clientes.");
+    } finally {
+      // 2. Ao final (sucesso ou erro), definimos o loading como false
+      setIsLoading(false);
     }
   };
 
-  // useEffect para buscar os clientes assim que a página carregar
   useEffect(() => {
     fetchClientes();
   }, []);
 
-  // Função para lidar com o envio do formulário de novo cliente
   const handleSubmit = async (e) => {
     e.preventDefault();
     setFeedback("");
 
     try {
-      // Envia os dados para a API
       await api.post("/clientes", { nome, email });
       setFeedback("Cliente cadastrado com sucesso!");
-
-      // Limpa os campos do formulário
       setNome("");
       setEmail("");
-
-      // Atualiza a lista de clientes para mostrar o novo
       fetchClientes();
     } catch (error) {
       console.error("Erro ao cadastrar cliente:", error);
@@ -57,7 +52,7 @@ export default function ClientesPage() {
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Gerenciamento de Clientes</h1>
 
-      {/* Formulário de Cadastro */}
+      {/* ... (formulário de cadastro continua o mesmo) ... */}
       <div className="mb-8 p-4 border rounded-lg">
         <h2 className="text-xl font-semibold mb-2">Novo Cliente</h2>
         <form onSubmit={handleSubmit}>
@@ -103,39 +98,46 @@ export default function ClientesPage() {
         {feedback && <p className="mt-4 text-sm text-green-600">{feedback}</p>}
       </div>
 
-      {/* Lista de Clientes */}
+      {/* Lista de Clientes com Renderização Condicional */}
       <div>
         <h2 className="text-xl font-semibold mb-2">Clientes Cadastrados</h2>
-        <div className="border rounded-lg overflow-hidden">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  ID
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Nome
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Email
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {clientes.map((cliente) => (
-                <tr key={cliente.id}>
-                  <td className="px-6 py-4 whitespace-nowrap">{cliente.id}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {cliente.nome}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {cliente.email}
-                  </td>
+        {/* 3. Lógica de renderização condicional */}
+        {isLoading ? (
+          <p className="text-center">Carregando clientes...</p>
+        ) : (
+          <div className="border rounded-lg overflow-hidden">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    ID
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Nome
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Email
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {clientes.map((cliente) => (
+                  <tr key={cliente.id}>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {cliente.id}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {cliente.nome}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {cliente.email}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   );
