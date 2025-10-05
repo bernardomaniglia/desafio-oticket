@@ -14,7 +14,6 @@ export default function PedidosPage() {
   const [feedback, setFeedback] = useState("");
   const [isLoading, setIsLoading] = useState(true);
 
-  // 1. Lógica de validação para o formulário de pedidos
   const isFormInvalid = selectedCliente === "" || selectedProdutos.size === 0;
 
   const fetchData = async () => {
@@ -30,7 +29,6 @@ export default function PedidosPage() {
       setProdutos(produtosRes.data);
     } catch (error) {
       console.error("Erro ao buscar dados:", error);
-      setFeedback("Erro ao carregar dados da página.");
     } finally {
       setIsLoading(false);
     }
@@ -57,7 +55,6 @@ export default function PedidosPage() {
       return;
     }
     setFeedback("");
-
     try {
       await api.post("/pedidos", {
         clienteId: parseInt(selectedCliente),
@@ -74,27 +71,31 @@ export default function PedidosPage() {
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Gerenciamento de Pedidos</h1>
+    <div className="container mx-auto p-4 md:p-8">
+      <h1 className="text-3xl font-bold mb-6 text-green-400">
+        Gerenciamento de Pedidos
+      </h1>
 
-      <div className="mb-8 p-4 border rounded-lg">
-        <h2 className="text-xl font-semibold mb-2">Novo Pedido</h2>
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
+      {/* Formulário de Novo Pedido com novo estilo de seleção */}
+      <div className="mb-8 p-6 bg-gray-800 border border-gray-700 rounded-lg shadow-md">
+        <h2 className="text-xl font-semibold mb-4 text-white">Novo Pedido</h2>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Seleção de Cliente */}
+          <div>
             <label
               htmlFor="cliente"
-              className="block text-sm font-medium text-gray-700"
+              className="block text-sm font-medium text-gray-300 mb-2"
             >
-              Cliente
+              1. Selecione o Cliente
             </label>
             <select
               id="cliente"
               value={selectedCliente}
               onChange={(e) => setSelectedCliente(e.target.value)}
               required
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+              className="block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md shadow-sm text-white focus:outline-none focus:ring-green-500 focus:border-green-500"
             >
-              <option value="">Selecione um cliente</option>
+              <option value="">Selecione um cliente...</option>
               {clientes.map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.nome}
@@ -103,72 +104,99 @@ export default function PedidosPage() {
             </select>
           </div>
 
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">
-              Produtos
+          {/* NOVA Seleção de Produtos com Cards */}
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              2. Escolha os Produtos
             </label>
-            <div className="mt-2 grid grid-cols-2 md:grid-cols-4 gap-4">
-              {produtos.map((p) => (
-                <div key={p.id} className="flex items-center">
-                  <input
-                    type="checkbox"
-                    id={`produto-${p.id}`}
-                    checked={selectedProdutos.has(p.id)}
-                    onChange={() => handleProdutoChange(p.id)}
-                    className="h-4 w-4 text-blue-600 border-gray-300 rounded"
-                  />
-                  <label
-                    htmlFor={`produto-${p.id}`}
-                    className="ml-2 block text-sm text-gray-900"
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {produtos.map((p) => {
+                const isSelected = selectedProdutos.has(p.id);
+                return (
+                  <button
+                    type="button"
+                    key={p.id}
+                    onClick={() => handleProdutoChange(p.id)}
+                    className={`text-left p-4 rounded-lg shadow-md transition-all duration-200 
+                      ${
+                        isSelected
+                          ? "bg-green-100 text-green-900 ring-2 ring-green-500"
+                          : "bg-gray-100 text-gray-800 hover:bg-gray-200"
+                      }`}
                   >
-                    {p.nome}
-                  </label>
-                </div>
-              ))}
+                    <p className="font-bold truncate">{p.nome}</p>
+                    <p className="text-sm">R$ {p.preco.toFixed(2)}</p>
+                  </button>
+                );
+              })}
             </div>
           </div>
 
-          {/* 2. Botão modificado com a lógica de disabled */}
           <button
             type="submit"
             disabled={isFormInvalid}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+            className="w-full md:w-auto px-6 py-3 bg-green-600 text-white font-bold rounded-md hover:bg-green-700 disabled:bg-gray-500 disabled:cursor-not-allowed"
           >
             Criar Pedido
           </button>
         </form>
-        {feedback && <p className="mt-4 text-sm text-red-600">{feedback}</p>}
+        {feedback && (
+          <p
+            className={`mt-4 text-sm ${
+              feedback.includes("sucesso") ? "text-green-400" : "text-red-400"
+            }`}
+          >
+            {feedback}
+          </p>
+        )}
       </div>
 
-      {/* Lista de Pedidos com Loading State */}
+      {/* Lista de Pedidos (continua igual, com o estilo de card que já fizemos) */}
       <div>
-        <h2 className="text-xl font-semibold mb-2">Pedidos Registrados</h2>
+        <h2 className="text-xl font-semibold mb-4 text-white">
+          Pedidos Registrados
+        </h2>
         {isLoading ? (
           <p className="text-center">Carregando pedidos...</p>
         ) : (
-          <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {pedidos.map((pedido) => (
-              <div key={pedido.id} className="p-4 border rounded-lg">
-                <p>
-                  <strong>ID do Pedido:</strong> {pedido.id}
-                </p>
-                <p>
-                  <strong>Cliente:</strong> {pedido.cliente?.nome || "N/A"}
-                </p>
-                <p>
-                  <strong>Status:</strong> {pedido.status}
-                </p>
-                <p>
-                  <strong>Produtos:</strong>
-                </p>
-                <ul className="list-disc list-inside">
-                  {pedido.produtos.map((item) => (
-                    <li key={item.produtoId}>
-                      {item.produto?.nome || "N/A"} - R${" "}
-                      {item.produto?.preco.toFixed(2) || "0.00"}
-                    </li>
-                  ))}
-                </ul>
+              <div
+                key={pedido.id}
+                className="bg-gray-100 text-gray-800 p-6 rounded-lg shadow-lg flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="font-bold text-lg">Pedido #{pedido.id}</h3>
+                    <span
+                      className={`px-3 py-1 text-sm font-semibold rounded-full ${
+                        pedido.status === "PAGO"
+                          ? "bg-green-200 text-green-800"
+                          : "bg-yellow-200 text-yellow-800"
+                      }`}
+                    >
+                      {pedido.status}
+                    </span>
+                  </div>
+                  <p className="text-sm mb-1">
+                    <strong>Cliente:</strong> {pedido.cliente?.nome || "N/A"}
+                  </p>
+                  <p className="text-sm text-gray-600 mb-4">
+                    <strong>Data:</strong>{" "}
+                    {new Date(pedido.data).toLocaleDateString("pt-BR")}
+                  </p>
+
+                  <div className="border-t border-gray-300 pt-3">
+                    <h4 className="font-semibold mb-2">Produtos:</h4>
+                    <ul className="list-disc list-inside text-sm space-y-1">
+                      {pedido.produtos.map((item) => (
+                        <li key={item.produtoId}>
+                          {item.produto?.nome || "N/A"}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
               </div>
             ))}
           </div>

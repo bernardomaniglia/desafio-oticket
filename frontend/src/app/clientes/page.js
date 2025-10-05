@@ -11,7 +11,6 @@ export default function ClientesPage() {
   const [feedback, setFeedback] = useState("");
   const [isLoading, setIsLoading] = useState(true);
 
-  // Lógica de validação: verifica se algum campo está vazio (ignorando espaços)
   const isFormInvalid = nome.trim() === "" || email.trim() === "";
 
   const fetchClientes = async () => {
@@ -33,10 +32,8 @@ export default function ClientesPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (isFormInvalid) return; // Segurança extra para não submeter se inválido
-
+    if (isFormInvalid) return;
     setFeedback("");
-
     try {
       await api.post("/clientes", { nome, email });
       setFeedback("Cliente cadastrado com sucesso!");
@@ -45,21 +42,24 @@ export default function ClientesPage() {
       fetchClientes();
     } catch (error) {
       console.error("Erro ao cadastrar cliente:", error);
-      setFeedback("Erro ao cadastrar cliente. Verifique os dados.");
+      setFeedback("Erro ao cadastrar cliente.");
     }
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Gerenciamento de Clientes</h1>
+    <div className="container mx-auto p-4 md:p-8">
+      <h1 className="text-3xl font-bold mb-6 text-green-400">
+        Gerenciamento de Clientes
+      </h1>
 
-      <div className="mb-8 p-4 border rounded-lg">
-        <h2 className="text-xl font-semibold mb-2">Novo Cliente</h2>
+      {/* Formulário com tema escuro */}
+      <div className="mb-8 p-6 bg-gray-800 border border-gray-700 rounded-lg shadow-md">
+        <h2 className="text-xl font-semibold mb-4 text-white">Novo Cliente</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label
               htmlFor="nome"
-              className="block text-sm font-medium text-gray-700"
+              className="block text-sm font-medium text-gray-300"
             >
               Nome
             </label>
@@ -69,13 +69,13 @@ export default function ClientesPage() {
               value={nome}
               onChange={(e) => setNome(e.target.value)}
               required
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              className="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md shadow-sm text-white focus:outline-none focus:ring-green-500 focus:border-green-500"
             />
           </div>
           <div className="mb-4">
             <label
               htmlFor="email"
-              className="block text-sm font-medium text-gray-700"
+              className="block text-sm font-medium text-gray-300"
             >
               Email
             </label>
@@ -85,56 +85,51 @@ export default function ClientesPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              className="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md shadow-sm text-white focus:outline-none focus:ring-green-500 focus:border-green-500"
             />
           </div>
           <button
             type="submit"
             disabled={isFormInvalid}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+            className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:bg-gray-500 disabled:cursor-not-allowed"
           >
             Cadastrar
           </button>
         </form>
-        {feedback && <p className="mt-4 text-sm text-green-600">{feedback}</p>}
+        {feedback && (
+          <p
+            className={`mt-4 text-sm ${
+              feedback.includes("sucesso") ? "text-green-500" : "text-red-400"
+            }`}
+          >
+            {feedback}
+          </p>
+        )}
       </div>
 
+      {/* Lista de Clientes com o novo estilo de Card Claro */}
       <div>
-        <h2 className="text-xl font-semibold mb-2">Clientes Cadastrados</h2>
+        <h2 className="text-xl font-semibold mb-4 text-white">
+          Clientes Cadastrados
+        </h2>
         {isLoading ? (
           <p className="text-center">Carregando clientes...</p>
         ) : (
-          <div className="border rounded-lg overflow-hidden">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    ID
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Nome
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Email
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {clientes.map((cliente) => (
-                  <tr key={cliente.id}>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {cliente.id}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {cliente.nome}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {cliente.email}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {clientes.map((cliente) => (
+              <div
+                key={cliente.id}
+                className="bg-gray-100 text-gray-800 p-6 rounded-lg shadow-lg"
+              >
+                <h3 className="font-bold text-lg text-green-800 truncate">
+                  {cliente.nome}
+                </h3>
+                <p className="text-sm text-gray-600 mb-3">ID: {cliente.id}</p>
+                <div className="border-t border-gray-300 pt-3">
+                  <p className="text-sm truncate">{cliente.email}</p>
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </div>

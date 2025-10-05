@@ -28,5 +28,8 @@
   "bugs": {
     "url": "https://github.com/bernardomaniglia/desafio-oticket/issues"
   },
-  "homepage": "https://github.com/bernardomaniglia/desafio-oticket#readme"
+  "homepage": "https://github.com/bernardomaniglia/desafio-oticket#readme",
+  "dependencies": {
+    "react-icons": "^5.5.0"
+  }
 }
